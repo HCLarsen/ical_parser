@@ -1,7 +1,6 @@
 require "test_helper"
 
 class TextParserTest < Minitest::Test
-
   include IcalParser
 
   def setup
