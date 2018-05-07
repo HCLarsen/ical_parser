@@ -17,4 +17,9 @@ class DurationParserTest < Minitest::Test
     durationString = "P7W"
     assert_equal 7 * 604800, DurationParser.parse(durationString)
   end
+
+  def test_parses_negative_duration
+    durationString = "-PT15M"
+    assert_equal -15 * 60, DurationParser.parse(durationString)
+  end
 end
