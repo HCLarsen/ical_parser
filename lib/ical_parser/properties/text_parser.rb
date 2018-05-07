@@ -1,5 +1,5 @@
 module IcalParser
-  class TextParser
+  module TextParser
     def self.unescape(string)
       string.gsub(/(\\(?!\\))/){ |match| "" }
     end

@@ -2,7 +2,7 @@ require 'tzinfo'
 require 'time'
 
 module IcalParser
-  class DateTimeParser
+  module DateTimeParser
     def self.parse(string)
       dTUTCRegex = /^\d{8}T\d{6}Z/
       dTRegex = /^\d{8}T\d{6}(?!Z)/

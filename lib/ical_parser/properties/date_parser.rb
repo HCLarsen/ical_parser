@@ -1,5 +1,5 @@
 module IcalParser
-  class DateParser
+  module DateParser
     def self.parse(string)
       Date.parse(string)
     end

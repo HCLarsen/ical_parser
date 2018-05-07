@@ -1,5 +1,5 @@
 module IcalParser
-  class DurationParser
+  module DurationParser
     SECONDS_PER_WEEK = 604800
     SECONDS_PER_DAY = 86400
     SECONDS_PER_HOUR = 3600
