@@ -5,7 +5,7 @@ module IcalParser
 
       matches = eventc.scan(regex)
       if matches.count == 1
-        TextParser.unescape(matches.first.first.strip)
+        TextParser.parse(matches.first.first.strip)
       elsif matches.size > 1
         raise "Invalid Event: #{propName} MUST NOT occur more than once"
       elsif !optional
