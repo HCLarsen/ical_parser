@@ -6,7 +6,7 @@ module IcalParser
     def self.parse(string)
       dTUTCRegex = /^\d{8}T\d{6}Z/
       dTRegex = /^\d{8}T\d{6}(?!Z)/
-      dTTZRegex = /\w:\d{8}T\d{6}/
+      dTTZRegex = /TZID=\w*\/\w*:\d{8}T\d{6}/
       tzRegex = /TZID=(.*):/
 
       if dTUTCRegex.match(string)
