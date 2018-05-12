@@ -6,16 +6,16 @@ module IcalParser
     SECONDS_PER_MINUTE = 60
 
     def self.parse(string)
-      polarity = /^-/.match(string) ? -1 : 1
+      if /^(?<polarity>[+-])?P((?<days>\d+)D)?(T((?<hours>\d+)H)?((?<minutes>\d+)M)?((?<seconds>\d+)S)?)?$/ =~ string
+        duration = (days.to_i * SECONDS_PER_DAY) + (hours.to_i * SECONDS_PER_HOUR) + (minutes.to_i * SECONDS_PER_MINUTE) + seconds.to_i
 
-      weeks = /(\d+)W/.match(string) {|m| m[1].to_i } || 0
-      days = /(\d+)D/.match(string) {|m| m[1].to_i } || 0
-      hours = /(\d+)H/.match(string) {|m| m[1].to_i } || 0
-      minutes = /(\d+)M/.match(string) {|m| m[1].to_i } || 0
-      seconds = /(\d+)S/.match(string) {|m| m[1].to_i } || 0
-
-      duration = (weeks * SECONDS_PER_WEEK) + (days * SECONDS_PER_DAY) + (hours * SECONDS_PER_HOUR) + (minutes * SECONDS_PER_MINUTE) + seconds
-      duration * polarity
+        polarity == "-" ? duration * -1 : duration
+      elsif /^(?<polarity>[+-])?P(?<weeks>\d+)W$/ =~ string
+        duration = weeks.to_i * SECONDS_PER_WEEK
+        polarity == "-" ? duration * -1 : duration
+      else
+        raise "Invalid Duration format"
+      end
     end
   end
 end
