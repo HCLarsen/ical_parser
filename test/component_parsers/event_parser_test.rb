@@ -98,4 +98,49 @@ class EventParserTest < Minitest::Test
     dtstamp = EventParser.find_property(@eventc, "dtstamp")
     assert_equal Time.utc(2016,4,18,18,0,0), dtstamp
   end
+
+  def test_finds_and_parses_organizer
+    eventc = <<~HEREDOC
+    BEGIN:VEVENT
+    DTSTAMP:19960704T120000Z
+    UID:uid1@example.com
+    ORGANIZER:mailto:jsmith@example.com
+    DTSTART:19960918T143000Z
+    DTEND:19960920T220000Z
+    STATUS:CONFIRMED
+    CATEGORIES:CONFERENCE
+    SUMMARY:Networld+Interop Conference
+    DESCRIPTION:Networld+Interop Conference
+      and Exhibit\nAtlanta World Congress Center\n
+     Atlanta\, Georgia
+    END:VEVENT
+    HEREDOC
+    organizer = EventParser.find_property(eventc, "organizer")
+    assert_equal "mailto", organizer.scheme
+    assert_equal "jsmith@example.com", organizer.to
+  end
+
+  def test_finds_and_parses_multiple_attendees
+    eventc = <<~HEREDOC
+    BEGIN:VEVENT
+    DTSTAMP:19960704T120000Z
+    UID:uid1@example.com
+    ORGANIZER:mailto:jsmith@example.com
+    ATTENDEE:mailto:jdoe@example.com
+    ATTENDEE:mailto:jimdo@example.com
+    ATTENDEE:mailto:john_public@example.com
+    DTSTART:19960918T143000Z
+    DTEND:19960920T220000Z
+    STATUS:CONFIRMED
+    CATEGORIES:CONFERENCE
+    SUMMARY:Networld+Interop Conference
+    DESCRIPTION:Networld+Interop Conference
+      and Exhibit\nAtlanta World Congress Center\n
+     Atlanta\, Georgia
+    END:VEVENT
+    HEREDOC
+    attendees = EventParser.find_property(eventc, "attendee")
+    assert_equal 3, attendees.count
+    assert_equal 'jdoe@example.com', attendees.first.to
+  end
 end
