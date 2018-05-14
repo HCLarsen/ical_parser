@@ -29,4 +29,11 @@ class DateTimeParserTest < Minitest::Test
     dateTime = DateTimeParser.parse("TZID=Canada/Pacific:19980119T020000")
     assert_equal Time.new(1998, 1, 19, 5, 0, 0, "-05:00"), dateTime
   end
+
+  def test_raises_on_invalid_date_time_format
+    error = assert_raises do
+      DateTimeParser.parse("19980119T230000-0800")
+    end
+    assert_equal "Invalid Date-Time format", error.message
+  end
 end

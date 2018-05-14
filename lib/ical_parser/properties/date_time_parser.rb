@@ -4,9 +4,9 @@ require 'time'
 module IcalParser
   module DateTimeParser
     def self.parse(string)
-      dTUTCRegex = /^\d{8}T\d{6}Z/
-      dTRegex = /^\d{8}T\d{6}(?!Z)/
-      dTTZRegex = /TZID=\w*\/\w*:\d{8}T\d{6}/
+      dTUTCRegex = /^\d{8}T\d{6}Z$/
+      dTRegex = /^\d{8}T\d{6}(?!Z)$/
+      dTTZRegex = /TZID=\w*\/\w*:\d{8}T\d{6}$/
       tzRegex = /TZID=(.*):/
 
       if dTUTCRegex.match(string)
@@ -29,6 +29,8 @@ module IcalParser
         time_zone_difference = local_offset - offset
 
         time + time_zone_difference
+      else
+        raise "Invalid Date-Time format"
       end
     end
   end
