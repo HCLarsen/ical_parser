@@ -27,7 +27,7 @@ class DateTimeParserTest < Minitest::Test
 
   def test_identifies_time_with_PST_timezone
     dateTime = DateTimeParser.parse("TZID=Canada/Pacific:19980119T020000")
-    assert_equal Time.new(1998, 1, 19, 5, 0, 0, "-05:00"), dateTime
+    assert_equal Time.new(1998, 1, 19, 2, 0, 0, "-08:00"), dateTime
   end
 
   def test_raises_on_invalid_date_time_format
