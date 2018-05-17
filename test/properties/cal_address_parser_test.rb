@@ -2,6 +2,7 @@ require "test_helper"
 
 class DateTimeParserTest < Minitest::Test
   include IcalParser
+  
   def test_parses_mailto_cal_address
     address = "mailto:jane_doe@example.com"
     uri = CalAddressParser.parse(address)
