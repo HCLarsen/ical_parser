@@ -23,6 +23,16 @@ class EventParserTest < Minitest::Test
     HEREDOC
   end
 
+  def test_unfolds_multi_line_text
+    folded_text = <<~FOLDED
+    DESCRIPTION:This is a lo
+     ng description
+      that exists on a long line.
+    FOLDED
+    unfolded_text = "DESCRIPTION:This is a long description that exists on a long line."
+    assert_equal unfolded_text, EventParser.unfold(folded_text.strip)
+  end
+
   def test_finds_and_parses_summary
     summary = EventParser.find_property(@eventc, "summary")
     assert_equal "Lunchtime meeting", summary

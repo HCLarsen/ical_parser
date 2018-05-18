@@ -11,6 +11,10 @@ module IcalParser
       "ATTENDEE" => {"parser" => CalAddressParser, "once_only" => false, "optional" => true}
     }
 
+    def self.unfold(string)
+      string.gsub(/\R\s/, "")
+    end
+
     def self.find_property(eventc, prop_name)
       prop_name.upcase!
       property = PROPERTIES[prop_name]
