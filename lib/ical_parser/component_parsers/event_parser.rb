@@ -18,14 +18,13 @@ module IcalParser
     def self.find_property(eventc, prop_name)
       prop_name.upcase!
       property = PROPERTIES[prop_name]
-      regex = /#{prop_name}:(.*?)\R(?=\w)/m
-
-      matches = eventc.scan(regex)
+      regex = /#{prop_name}(?<params>;.+?)?:(?<value>.+?)\R/
+      matches = eventc.scan(regex).map {|match| {"params" => match[0], "value" => match[1].strip} }
       if matches.count == 1
-        property["parser"].parse(matches.first.first.strip)
+        property["parser"].parse(matches.first["value"])
       elsif matches.size > 1 && property["once_only"] == false
         matches.map do |match|
-          property["parser"].parse(match.first.strip)
+          property["parser"].parse(match["value"])
         end
       elsif matches.size > 1
         raise "Invalid Event: #{prop_name} MUST NOT occur more than once"

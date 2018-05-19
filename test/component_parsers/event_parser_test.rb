@@ -34,7 +34,7 @@ class EventParserTest < Minitest::Test
   end
 
   def test_finds_and_parses_summary
-    summary = EventParser.find_property(@eventc, "summary")
+    summary = EventParser.find_property(EventParser.unfold(@eventc), "summary")
     assert_equal "Lunchtime meeting", summary
   end
 
@@ -49,8 +49,8 @@ class EventParserTest < Minitest::Test
      closure!!!
     DESCRIPTION_STRING
 
-    description = EventParser.find_property(@eventc, "description")
-    assert_equal description_string.strip, description
+    description = EventParser.find_property(EventParser.unfold(@eventc), "description")
+    assert_equal EventParser.unfold(description_string.strip), description
   end
 
   def test_does_not_raise_on_no_summary
@@ -82,7 +82,7 @@ class EventParserTest < Minitest::Test
     HEREDOC
 
     error = assert_raises do
-      summary = EventParser.find_property(eventc, "summary")
+      summary = EventParser.find_property(EventParser.unfold(eventc), "summary")
     end
     assert_equal "Invalid Event: SUMMARY MUST NOT occur more than once", error.message
   end
@@ -105,7 +105,7 @@ class EventParserTest < Minitest::Test
   end
 
   def test_finds_and_parses_dtstamp
-    dtstamp = EventParser.find_property(@eventc, "dtstamp")
+    dtstamp = EventParser.find_property(EventParser.unfold(@eventc), "dtstamp")
     assert_equal Time.utc(2016,4,18,18,0,0), dtstamp
   end
 
@@ -125,7 +125,7 @@ class EventParserTest < Minitest::Test
      Atlanta\, Georgia
     END:VEVENT
     HEREDOC
-    organizer = EventParser.find_property(eventc, "organizer")
+    organizer = EventParser.find_property(EventParser.unfold(eventc), "organizer")
     assert_equal "mailto", organizer.scheme
     assert_equal "jsmith@example.com", organizer.to
   end
@@ -149,7 +149,7 @@ class EventParserTest < Minitest::Test
      Atlanta\, Georgia
     END:VEVENT
     HEREDOC
-    attendees = EventParser.find_property(eventc, "attendee")
+    attendees = EventParser.find_property(EventParser.unfold(eventc), "attendee")
     assert_equal 3, attendees.count
     assert_equal 'jdoe@example.com', attendees.first.to
   end
