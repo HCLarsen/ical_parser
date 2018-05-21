@@ -153,4 +153,16 @@ class EventParserTest < Minitest::Test
     assert_equal 3, attendees.count
     assert_equal 'jdoe@example.com', attendees.first.to
   end
+
+  def test_parses_tz_params
+    params = "TZID=America/New_York"
+    hash = {"TZID" => "America/New_York"}
+    assert_equal hash, EventParser.parse_params(params)
+  end
+
+  def test_parses_multiple_params
+    params = "ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;CN=Henry Cabot"
+    hash = {"ROLE" => "REQ-PARTICIPANT", "PARTSTAT" => "TENTATIVE", "CN" => "Henry Cabot"}
+    assert_equal hash, EventParser.parse_params(params)
+  end
 end
