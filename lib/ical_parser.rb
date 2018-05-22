@@ -11,6 +11,7 @@ require "ical_parser/properties/text_parser"
 require "ical_parser/properties/uri_parser"
 require "ical_parser/properties/cal_address_parser"
 
+require "ical_parser/component_parsers/parser"
 require "ical_parser/component_parsers/event_parser"
 
 module IcalParser

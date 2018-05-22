@@ -1,7 +1,7 @@
 require "test_helper"
 
 class EventParserTest < Minitest::Test
-  include IcalParser
+  include IcalParser::EventParser
 
   def setup
     @eventc = <<~HEREDOC
@@ -30,11 +30,11 @@ class EventParserTest < Minitest::Test
       that exists on a long line.
     FOLDED
     unfolded_text = "DESCRIPTION:This is a long description that exists on a long line."
-    assert_equal unfolded_text, EventParser.unfold(folded_text.strip)
+    assert_equal unfolded_text, unfold(folded_text.strip)
   end
 
   def test_finds_and_parses_summary
-    summary = EventParser.find_property(EventParser.unfold(@eventc), "summary")
+    summary = find_property(unfold(@eventc), "summary")
     assert_equal "Lunchtime meeting", summary
   end
 
@@ -49,8 +49,8 @@ class EventParserTest < Minitest::Test
      closure!!!
     DESCRIPTION_STRING
 
-    description = EventParser.find_property(EventParser.unfold(@eventc), "description")
-    assert_equal EventParser.unfold(description_string.strip), description
+    description = find_property(unfold(@eventc), "description")
+    assert_equal unfold(description_string.strip), description
   end
 
   def test_does_not_raise_on_no_summary
@@ -64,7 +64,7 @@ class EventParserTest < Minitest::Test
     END:VEVENT
     HEREDOC
 
-    summary = EventParser.find_property(eventc, "summary")
+    summary = find_property(eventc, "summary")
     assert_nil summary
   end
 
@@ -82,7 +82,7 @@ class EventParserTest < Minitest::Test
     HEREDOC
 
     error = assert_raises do
-      summary = EventParser.find_property(EventParser.unfold(eventc), "summary")
+      summary = find_property(unfold(eventc), "summary")
     end
     assert_equal "Invalid Event: SUMMARY MUST NOT occur more than once", error.message
   end
@@ -99,13 +99,13 @@ class EventParserTest < Minitest::Test
     HEREDOC
 
     error = assert_raises do
-      summary = EventParser.find_property(eventc, "uid")
+      summary = find_property(eventc, "uid")
     end
     assert_equal "Invalid Event: UID is REQUIRED", error.message
   end
 
   def test_finds_and_parses_dtstamp
-    dtstamp = EventParser.find_property(EventParser.unfold(@eventc), "dtstamp")
+    dtstamp = find_property(unfold(@eventc), "dtstamp")
     assert_equal Time.utc(2016,4,18,18,0,0), dtstamp
   end
 
@@ -125,7 +125,7 @@ class EventParserTest < Minitest::Test
      Atlanta\, Georgia
     END:VEVENT
     HEREDOC
-    organizer = EventParser.find_property(EventParser.unfold(eventc), "organizer")
+    organizer = find_property(unfold(eventc), "organizer")
     assert_equal "mailto", organizer.scheme
     assert_equal "jsmith@example.com", organizer.to
   end
@@ -149,7 +149,7 @@ class EventParserTest < Minitest::Test
      Atlanta\, Georgia
     END:VEVENT
     HEREDOC
-    attendees = EventParser.find_property(EventParser.unfold(eventc), "attendee")
+    attendees = find_property(unfold(eventc), "attendee")
     assert_equal 3, attendees.count
     assert_equal 'jdoe@example.com', attendees.first.to
   end
@@ -157,12 +157,12 @@ class EventParserTest < Minitest::Test
   def test_parses_tz_params
     params = "TZID=America/New_York"
     hash = {"TZID" => "America/New_York"}
-    assert_equal hash, EventParser.parse_params(params)
+    assert_equal hash, parse_params(params)
   end
 
   def test_parses_multiple_params
     params = "ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;CN=Henry Cabot"
     hash = {"ROLE" => "REQ-PARTICIPANT", "PARTSTAT" => "TENTATIVE", "CN" => "Henry Cabot"}
-    assert_equal hash, EventParser.parse_params(params)
+    assert_equal hash, parse_params(params)
   end
 end

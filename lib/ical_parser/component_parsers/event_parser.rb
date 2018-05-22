@@ -1,5 +1,7 @@
 module IcalParser
   module EventParser
+    include Parser
+
     PROPERTIES = {
       "SUMMARY" => {"parser" => TextParser, "once_only" => true, "optional" => true},
       "DESCRIPTION" => {"parser" => TextParser, "once_only" => true, "optional" => true},
@@ -11,11 +13,9 @@ module IcalParser
       "ATTENDEE" => {"parser" => CalAddressParser, "once_only" => false, "optional" => true}
     }
 
-    def self.unfold(string)
-      string.gsub(/\R\s/, "")
-    end
+    private
 
-    def self.find_property(eventc, prop_name)
+    def find_property(eventc, prop_name)
       prop_name.upcase!
       property = PROPERTIES[prop_name]
       regex = /#{prop_name}(?<params>;.+?)?:(?<value>.+?)\R/
@@ -35,11 +35,8 @@ module IcalParser
       end
     end
 
-    def self.parse_params(params)
-      params_array = params.split(";").map do |param|
-        key, value = param.split("=")
-      end
-      params_array.to_h
+    def unfold(string)
+      string.gsub(/\R\s/, "")
     end
   end
 end
