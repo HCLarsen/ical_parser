@@ -6,19 +6,15 @@ class EventParserTest < Minitest::Test
   def setup
     @eventc = <<~HEREDOC
     BEGIN:VEVENT
-    SUMMARY:Lunchtime meeting
-    UID:ff808181-1fd7389e-011f-d7389ef9-00000003
-    DTSTAMP:20160418T180000Z
-    DTSTART;TZID=America/New_York:20160420T120000
-    DURATION:PT1H
-    DESCRIPTION: We'll continue with the unfinished business from last time,
-     in particular:
-       Can names dtstart with a number?
-       What if they are all numeric?
-       Reuse of names - is it valid
-     I remind the attendees we have spent 3 months on these subjects. We need
-     closure!!!
-    LOCATION:Mo's bar - back room
+    DTSTAMP:19960704T120000Z
+    UID:uid1@example.com
+    ORGANIZER:mailto:jsmith@example.com
+    DTSTART:19960918T143000Z
+    DTEND:19960920T220000Z
+    STATUS:CONFIRMED
+    CATEGORIES:CONFERENCE
+    SUMMARY:Networld+Interop Conference
+    DESCRIPTION:Networld+Interop Conference and Exhibit\nAtlanta World Congress Center\nAtlanta\, Georgia
     END:VEVENT
     HEREDOC
   end
@@ -34,23 +30,8 @@ class EventParserTest < Minitest::Test
   end
 
   def test_finds_and_parses_summary
-    summary = find_property(unfold(@eventc), "summary")
-    assert_equal "Lunchtime meeting", summary
-  end
-
-  def test_finds_and_parses_multi_line_description
-    description_string = <<~DESCRIPTION_STRING
-    We'll continue with the unfinished business from last time,
-     in particular:
-       Can names dtstart with a number?
-       What if they are all numeric?
-       Reuse of names - is it valid
-     I remind the attendees we have spent 3 months on these subjects. We need
-     closure!!!
-    DESCRIPTION_STRING
-
-    description = find_property(unfold(@eventc), "description")
-    assert_equal unfold(description_string.strip), description
+    summary = find_property(@eventc, "summary")
+    assert_equal "Networld+Interop Conference", summary
   end
 
   def test_does_not_raise_on_no_summary
@@ -82,7 +63,7 @@ class EventParserTest < Minitest::Test
     HEREDOC
 
     error = assert_raises do
-      summary = find_property(unfold(eventc), "summary")
+      summary = find_property(eventc, "summary")
     end
     assert_equal "Invalid Event: SUMMARY MUST NOT occur more than once", error.message
   end
@@ -105,27 +86,12 @@ class EventParserTest < Minitest::Test
   end
 
   def test_finds_and_parses_dtstamp
-    dtstamp = find_property(unfold(@eventc), "dtstamp")
-    assert_equal Time.utc(2016,4,18,18,0,0), dtstamp
+    dtstamp = find_property(@eventc, "dtstamp")
+    assert_equal Time.utc(1996,7,4,12,0,0), dtstamp
   end
 
   def test_finds_and_parses_organizer
-    eventc = <<~HEREDOC
-    BEGIN:VEVENT
-    DTSTAMP:19960704T120000Z
-    UID:uid1@example.com
-    ORGANIZER:mailto:jsmith@example.com
-    DTSTART:19960918T143000Z
-    DTEND:19960920T220000Z
-    STATUS:CONFIRMED
-    CATEGORIES:CONFERENCE
-    SUMMARY:Networld+Interop Conference
-    DESCRIPTION:Networld+Interop Conference
-      and Exhibit\nAtlanta World Congress Center\n
-     Atlanta\, Georgia
-    END:VEVENT
-    HEREDOC
-    organizer = find_property(unfold(eventc), "organizer")
+    organizer = find_property(@eventc, "organizer")
     assert_equal "mailto", organizer.scheme
     assert_equal "jsmith@example.com", organizer.to
   end
@@ -144,12 +110,10 @@ class EventParserTest < Minitest::Test
     STATUS:CONFIRMED
     CATEGORIES:CONFERENCE
     SUMMARY:Networld+Interop Conference
-    DESCRIPTION:Networld+Interop Conference
-      and Exhibit\nAtlanta World Congress Center\n
-     Atlanta\, Georgia
+    DESCRIPTION:Networld+Interop Conference and Exhibit\nAtlanta World Congress Center\nAtlanta\, Georgia
     END:VEVENT
     HEREDOC
-    attendees = find_property(unfold(eventc), "attendee")
+    attendees = find_property(eventc, "attendee")
     assert_equal 3, attendees.count
     assert_equal 'jdoe@example.com', attendees.first.to
   end
