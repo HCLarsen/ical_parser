@@ -34,9 +34,5 @@ module IcalParser
         nil
       end
     end
-
-    def unfold(string)
-      string.gsub(/\R\s/, "")
-    end
   end
 end
