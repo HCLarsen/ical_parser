@@ -1,5 +1,7 @@
 require "ical_parser/version"
 
+require "ical_parser/property"
+
 require "ical_parser/properties/boolean_parser"
 require "ical_parser/properties/float_parser"
 require "ical_parser/properties/date_parser"
