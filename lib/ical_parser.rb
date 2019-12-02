@@ -13,6 +13,7 @@ require "ical_parser/properties/duration_parser"
 require "ical_parser/properties/text_parser"
 require "ical_parser/properties/uri_parser"
 require "ical_parser/properties/cal_address_parser"
+require "ical_parser/properties/period_of_time_parser"
 
 require "ical_parser/component_parsers/parser"
 require "ical_parser/component_parsers/calendar_parser"
